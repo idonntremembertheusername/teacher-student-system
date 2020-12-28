@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ts.mapper.MaterialMapper">
+
+    <select id="selectMaterialStudent" resultType="com.ts.entity.Material">
+        SELECT
+          *
+        FROM
+          material
+        WHERE teacher_id IN
+          (SELECT
+            teacher_id
+          FROM
+            course
+          WHERE course_id IN
+            (SELECT
+              course_id
+            FROM
+              cs
+            WHERE student_id = #{userId})) and  ${ew.sqlSegment}
+    </select>
+</mapper>

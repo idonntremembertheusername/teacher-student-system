@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ts.mapper.ForumMapper">
+
+    <select id="selectForum" resultType="com.ts.entity.Forum">
+        SELECT
+          * ,
+          (SELECT COUNT(1) FROM message WHERE forum.`forum_id`=message.`forum_id`) answer
+        FROM
+          forum   ${ew.customSqlSegment}
+    </select>
+</mapper>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ts.mapper.UserMapper">
+
+
+    <select id="selectStudent" resultType="com.ts.entity.UserVo">
+        SELECT
+          *,
+          (SELECT COUNT(1) FROM forum WHERE forum.`author_id` = user.`user_id`) fNumber,
+          (SELECT COUNT(1) FROM message WHERE message.`author_id` = user.`user_id` ) mNumber
+        FROM
+          USER
+        WHERE user_id IN
+          (SELECT
+            student_id
+          FROM
+            cs
+          WHERE course_id IN
+            (SELECT
+              course_id
+            FROM
+              course
+            WHERE teacher_id = #{userId})) and  ${ew.sqlSegment}
+    </select>
+
+
+
+
+    <select id="selectCourseStudent" resultType="com.ts.entity.UserVo">
+        SELECT
+          *,
+          (SELECT COUNT(1) FROM forum WHERE forum.`author_id` = user.`user_id`) fNumber,
+          (SELECT COUNT(1) FROM message WHERE message.`author_id` = user.`user_id` ) mNumber,
+          (SELECT NAME FROM course WHERE course_id = #{courseId} ) courseName
+        FROM
+          USER
+        WHERE user_id IN
+          (SELECT
+            student_id
+          FROM
+            cs
+          WHERE course_id = #{courseId}) and  ${ew.sqlSegment}
+    </select>
+
+    <select id="selectPageCount" resultType="com.ts.entity.UserVo">
+        SELECT
+          *,
+          (SELECT COUNT(1) FROM forum WHERE forum.`author_id` = user.`user_id`) fNumber,
+          (SELECT COUNT(1) FROM message WHERE message.`author_id` = user.`user_id` ) mNumber
+        FROM
+          USER   ${ew.customSqlSegment}
+    </select>
+
+    <select id="selectDashboardCount" resultType="com.ts.entity.DashboardVo">
+       SELECT
+           COUNT(1) forumPublish,
+          (SELECT COUNT(DISTINCT forum_id)  FROM message ) forumAnswer,
+          (SELECT COUNT(1)  FROM material WHERE STATUS=1) material1,
+          (SELECT COUNT(1)  FROM material WHERE STATUS=2) material2,
+          (SELECT COUNT(1)  FROM material WHERE STATUS=3) material3,
+          (SELECT COUNT(1)  FROM homework ) homeworkUpload,
+          (SELECT COUNT(1)  FROM homework WHERE score>0) homeworkGoal,
+          (SELECT COUNT(1)  FROM homework WHERE score IS NULL) homeworkNoGoal
+        FROM
+          forum
+    </select>
+</mapper>

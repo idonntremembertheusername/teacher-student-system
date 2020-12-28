@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ts.mapper.CourseMapper">
+
+    <select id="getStudentCourse" resultType="com.ts.entity.Course">
+        SELECT
+          *
+        FROM
+          course
+        WHERE course_id IN
+          (SELECT
+            course_id
+          FROM
+            cs
+          WHERE student_id = #{userId})
+    </select>
+
+    <select id="getTeacherCourse" resultType="com.ts.entity.Course">
+        SELECT
+          *
+        FROM
+          course
+        WHERE teacher_id = #{userId}
+    </select>
+
+    <select id="getStudentCoursePage" resultType="com.ts.entity.CourseVo">
+        SELECT
+          *,
+          (SELECT COUNT(1) FROM material WHERE material.`course_id`=course.`course_id` ) mNumber,
+          (SELECT COUNT(1) FROM homework WHERE homework.`course_id`=course.`course_id` ) hNumber,
+          (SELECT COUNT(1) FROM cs WHERE cs.`course_id`=course.`course_id` ) sNumber
+        FROM
+          course
+        WHERE course_id IN
+          (SELECT
+            course_id
+          FROM
+            cs
+          WHERE student_id = #{userId})
+    </select>
+
+    <select id="getCoursePage" resultType="com.ts.entity.CourseVo">
+        SELECT
+          *,
+          (SELECT COUNT(1) FROM material WHERE material.`course_id`=course.`course_id` ) mNumber,
+          (SELECT COUNT(1) FROM homework WHERE homework.`course_id`=course.`course_id` ) hNumber,
+          (SELECT COUNT(1) FROM cs WHERE cs.`course_id`=course.`course_id` ) sNumber
+        FROM
+          course  ${ew.customSqlSegment}
+    </select>
+
+</mapper>
